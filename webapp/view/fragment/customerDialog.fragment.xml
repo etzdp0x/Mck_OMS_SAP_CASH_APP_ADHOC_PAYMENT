@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog title="Select Customer"
+		class="sapUiSizeCompact">
+		<subHeader>
+			<Toolbar>
+				<SearchField id="customer_Id" liveChange="handleCustomerValueHelpSearch" />
+			</Toolbar>
+		</subHeader>
+
+		<List id="customer_listId" items="{customerModel>/results}" width="20rem"
+			mode="SingleSelectMaster" selectionChange="customerSelectionChange">
+			<StandardListItem description="{customerModel>Account}" iconInset="true" title="{customerModel>Name}"/>
+
+		</List>
+		<buttons>
+			<Button text="Cancel" press="handleCustomerDialogClose" type="Emphasized" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

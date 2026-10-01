@@ -1,0 +1,161 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "com.acc.cashappadhocpayment",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.27.0",
+      "toolsId": "73fd49e2-3fd2-4dad-a1fb-c71d5787bc50"
+    },
+    "dataSources": {
+      "ZFI_AROPENITEMS_CDS_VAN": {
+        "uri": "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZFI_AROPENITEMS_CDS_VAN',Version='0001')/$value/",
+        "type": "ODataAnnotation",
+        "settings": {
+          "localUri": "localService/mainService/ZFI_AROPENITEMS_CDS_VAN.xml"
+        }
+      },
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZFI_AROPENITEMS_CDS/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "ZFI_AROPENITEMS_CDS_VAN"
+          ],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "paymentService": {
+      "uri": "/sap/opu/odata/sap/ZFI_ACH_PAYMENTUI/",
+      "type": "OData",
+      "settings": {
+        "odataVersion": "2.0"
+      }
+    },
+     "bankValidationService": {
+      "uri": "/sap/opu/odata/sap/ZFI_CUST_BANK_DETAILS_CDS/",
+      "type": "OData",
+      "settings": {
+        "odataVersion": "2.0"
+      }
+    }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "cash_app_adhoc_payment-display": {
+          "semanticObject": "cash_app_adhoc_payment",
+          "action": "display",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.120.30",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.acc.cashappadhocpayment.i18n.i18n"
+        }
+      },
+      "dummyData":{
+        "type":"sap.ui.model.json.JSONModel",
+				"uri":"model/data.json"
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },
+      "payment": {
+      "dataSource": "paymentService",
+      "preload": false
+    },
+    "bankValidation": {
+      "dataSource": "bankValidationService",
+      "preload": false
+    }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "com.acc.cashappadhocpayment.view",
+        "async": true,
+        "viewPath": "com.acc.cashappadhocpayment.view"
+      },
+      "routes": [
+        {
+          "name": "RouteMasterpage",
+          "pattern": ":?query:",
+          "target": [
+            "TargetMasterpage"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetMasterpage": {
+          "id": "Masterpage",
+          "name": "Masterpage"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.acc.cashappadhocpayment.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}

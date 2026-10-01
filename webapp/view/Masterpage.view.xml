@@ -1,0 +1,539 @@
+<mvc:View
+  controllerName="com.acc.cashappadhocpayment.controller.Masterpage"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:f="sap.ui.layout.form"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+  xmlns:m="sap.m">
+
+  <m:Page title="Adhoc ACH Payments" enableScrolling="false">
+
+    <m:content>
+
+      <m:Wizard id="idWizard" showNextButton="false" stepActivate="onStepActivate"
+      complete="onWizardComplete" class="noWizardScroll">
+
+        <m:WizardStep id="idStep1" title="Enter Parameters">
+        <m:VBox height="100%" class="stepContent">
+             <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout">
+
+                    <m:Label text="Company Code" required="true"/>
+                    <m:Input width="20rem" value="" id="idCompanyCode" 
+                    placeholder="Select Company Code" showValueHelp="true" valueHelpOnly="true"
+										class="sapUiTinyMarginBegin" valueHelpRequest="handleCompanyCodeDialog"/>
+                  <!-- <m:ComboBox width="20rem" id="idCompanyCode" placeholder="Select Company Code"
+                  selectionChange="onCompanyCodeChange"
+                  items="{companyCodeModel>/results}"> 
+                  <core:Item key="{companyCodeModel>CompanyCode}" text="{companyCodeModel>CompanyCode} - {companyCodeModel>CompanyCodeName}" />
+                </m:ComboBox>-->
+
+                    <!-- Customer -->
+
+                <m:Label text="Customer" required="true"/>
+                <m:Input width="20rem" value="" id="idCustomer" placeholder="Select Customer"
+                 showValueHelp="true" valueHelpOnly="true" class="sapUiTinyMarginBegin"
+                valueHelpRequest="handleCustomerDialog"/>
+               
+                    <m:Label text="Customer Name" required="true"/>
+                    <m:Input id="idCustomerName" class="sapUiTinyMarginBegin"
+                        value="" 
+                        editable="false"
+                        width="20rem"/>
+
+                    <!-- Payment Type -->
+                    <m:Label text="Payment Type" required="true"/>
+
+                    <m:HBox width="10rem" class="sapUiTinyMarginBottom sapUiTinyMarginBegin">
+                        <m:Button id="idFullPaymentBtn"
+                            text="Full Payment"
+                            type="Default"
+                            press="onButtonPress"
+                            class="sapUiTinyMarginEnd paymentTypeCss"/>
+
+                        <m:Button id="idPartialPaymentBtn"
+                            text="Residual / Partial"
+                            type="Default"
+                            press="onButtonPress"
+                            class="sapUiTinyMarginEnd paymentTypeCss"/>
+
+                        <m:Button id="idOnAccountBtn"
+                            text="On-Account"
+                            type="Default"
+                            press="onButtonPress"
+                            class="sapUiTinyMarginEnd paymentTypeCss"/>
+                    </m:HBox>
+
+                    <m:Label text="Amount" required="true"/>
+
+                    <m:HBox id="idAmountHBox" >
+                        <m:Input id="idAmount" type="Number"
+                            class="sapUiTinyMarginBegin"
+                            value="" liveChange="onAmountChange"
+                            width="16rem"/>
+
+                        <m:Input
+                            value="USD"
+                            editable="false"
+                            width="3.6rem"
+                            class="sapUiTinyMarginBegin"/>
+                    </m:HBox>
+
+                    <!--  -->
+
+                    <m:Label text="Assignment" required="true"/>
+                        <m:Input id="idAssignment"
+                            value=""
+                            width="20rem"
+                            class="sapUiTinyMarginBegin"/>
+
+                    <m:Label text="Reference" required="true"/>
+                        <m:Input id="idReference"
+                            value=""
+                            width="20rem"
+                            class="sapUiTinyMarginBegin"/>
+                    
+                    <m:Label text="Message Text" required="true"/>
+                        <m:Input id="idMsgText"
+                            value=""
+                            width="20rem"
+                            class="sapUiTinyMarginBegin"/>
+                    
+                    <!--  -->
+
+                    <m:Label text="Key Date" required="true"/>
+
+                    <m:DatePicker id="idKeyDate" enabled="false"
+                        change="onKeyDateChange" class="sapUiTinyMarginBegin"
+                        displayFormat="dd/MM/yyyy"
+                        width="20rem"/>
+
+                    <!-- Bank Authorization -->
+                    <m:Label text="Bank Authorization" required="true"/>
+
+                    <m:CheckBox id="idBankAuthorization" select="onCheckBoxSelect"
+                        text="I confirm customer authorization for ACH debit."
+                        selected="false" class="sapUiTinyMarginBegin"/>
+                      
+                    <m:Label id="idLblBankDetails" text="Select Bank" visible="false"></m:Label>
+                     <m:ComboBox visible="false" width="20rem" id="idBankSelection" placeholder="Select Bank"
+                      selectionChange="onCompanyCodeChange" class="sapUiTinyMarginBegin"
+                      items="{bankDetailsModel>/results}"> 
+                      <core:Item key="{bankDetailsModel>CompanyCode}" text="{bankDetailsModel>CompanyCode} - {companyCodeModel>CompanyCodeName}" />
+                    </m:ComboBox>
+
+                </f:SimpleForm>
+            
+        <m:HBox justifyContent="End" class="sapUiTinyMarginTop">
+        <!-- <m:Button text="Cross Nav" class="wizardNavBtn sapUiSmallMarginEnd" type="Emphasized" press="onViewDetails"/> -->
+        <m:Button text="Next" class="wizardNavBtn" type="Emphasized" press="onNextParameters"/>
+        </m:HBox>
+        
+        </m:VBox> 
+        </m:WizardStep>
+
+      <m:WizardStep id="idStep2" title="Select Open Items">
+      <m:VBox height="100%" class="stepContent">
+            <!-- <m:ScrollContainer
+        height="100%"
+        vertical="true"> -->
+        <!-- <m:VBox> -->
+      <t:Table
+      id="idOpenItemsTable"
+      rows="{openItemsModel>/results}"
+      selectionMode="MultiToggle"
+      rowSelectionChange="onRowSelectionChange"
+      visibleRowCount="8"
+      enableSelectAll="true">
+
+      <t:extension>
+
+        <m:OverflowToolbar>
+          <m:Title id="idTotalTblItems" text="Open Items (0)">
+            <m:layoutData>
+							<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+						</m:layoutData>
+          </m:Title>
+
+          <m:ToolbarSpacer/>
+
+          <m:Button visible="false"
+            icon="sap-icon://refresh"
+            press="onRefresh">
+            <m:layoutData>
+							<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+						</m:layoutData>
+          </m:Button>
+          
+          <m:SearchField width="40%" liveChange="onSearchTblItems"
+           placeholder="Search by doc no,doc type,reference,open amount">
+            <m:layoutData>
+							<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+						</m:layoutData>
+          </m:SearchField>
+          
+          <m:Button visible="false"
+            icon="sap-icon://filter"
+            press="onFilter"/>
+
+          <!-- <m:Text text="Items (0)" id="idSelectedTableItems"/> -->
+
+        </m:OverflowToolbar>
+
+      </t:extension>
+
+      <t:columns>
+
+        <t:Column>
+          <m:Label text="Document No"/>
+          <t:template>
+            <m:Text text="{openItemsModel>DocumentNumber}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Doc Type"/>
+          <t:template>
+            <m:Text text="{openItemsModel>DocumentType}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Posting Date"/>
+          <t:template>
+            <m:Text text="{path:'openItemsModel>PostingDate',formatter:'.formatter.formatDate'}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Due Date"/>
+          <t:template>
+            <m:Text text="{path:'openItemsModel>DueDate',formatter:'.formatter.formatDate'}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Open Amount"/>
+          <t:template>
+            <m:Text text="{openItemsModel>OpenAmount}"/>
+          </t:template>
+        </t:Column>
+        
+        <t:Column>
+          <m:Label text="Currency"/>
+          <t:template>
+            <m:Text text="{openItemsModel>TransactionCurrency}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Days Overdue"/>
+          <t:template>
+          	<m:Text text="{parts:[{path:'openItemsModel>PostingDate'},{path:'openItemsModel>DueDate'}], formatter:'.formatter.getDaysOverdue'}"/>
+          </t:template>
+        </t:Column>
+
+        <t:Column>
+          <m:Label text="Reference"/>
+          <t:template>
+          	<m:Text text="{openItemsModel>Reference}"/>
+          </t:template>
+        </t:Column>
+      </t:columns>
+
+    </t:Table>
+    
+    <m:HBox justifyContent="End" id="idSelectedTotalHbox" class="sapUiTinyMarginTop">
+        <m:Title id="idSelectedTotalTitle" text="Selected Total : 0 USD" />
+        </m:HBox>
+    <!-- For partial payment -->
+     <m:Panel expandable="false" id="idResidualPaymentPanel" visible="false" class="sapUiSmallMarginTop">
+      <!-- <m:VBox class="sapUiSmallMargin"> -->
+      <f:SimpleForm 
+      labelSpanL="5" labelSpanM="6" labelSpanXL="6" editable="false" layout="ResponsiveGridLayout" columnsM="2"
+	    columnsL="3" columnsXL="4" class="formHiddenTitle sapUiFormContainerTitle sapUiFormTitle">
+		<f:content>
+      <core:Title text="Selected Invoice Details" />
+          <m:Label text="Invoice No"/>
+            <m:Text text="{selectedInvoiceModel>/DocumentNumber}"/>
+            
+          <m:Label text="Open Amount"/>
+          <m:Text text="{selectedInvoiceModel>/OpenAmount}"/>
+          <core:Title/>
+          
+          <m:Label text="Amount to Pay"/>
+          <m:Text text="{selectedInvoiceModel>/amountToPay} USD" /> 
+        
+          <m:Label text="Residual Amount"/>
+          <m:Text text="{selectedInvoiceModel>/ResidualAmount} USD"/>
+          
+          
+    </f:content>
+    </f:SimpleForm>
+
+    </m:Panel>
+
+    <!-- On Account Posting -->
+
+    <m:Panel
+    id="idOnAccountPanel"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    width="100%"
+    class="sapUiResponsiveMargin">
+
+
+    <m:VBox class="sapUiSmallMargin">
+
+        <m:HBox justifyContent="Center">
+
+            <m:Panel
+                width="32rem"
+                class="sapUiResponsiveMargin">
+
+              <m:HBox>
+              <core:Icon
+                        src="sap-icon://building"
+                        size="3rem"
+                        color="#0a6ed1" />
+                <m:VBox
+                    alignItems="Center">
+
+                    <m:Title
+                        text="On-Account Payment Request"
+                        level="H4"
+                        class="sapUiSmallMarginTop"/>
+
+                    <m:Text
+                        text="This payment will be posted on-account using"/>
+
+                    <m:Title
+                        text="Special G/L Indicator = F (Fixed)"
+                        level="H5"
+                        class="sapUiTinyMarginBottom"/>
+
+                    <m:Panel
+                        width="20rem"
+                        class="sapUiSmallMarginTop">
+
+                        <m:VBox class="sapUiSmallMargin" binding="{/firstPageData}">
+
+                            <m:HBox justifyContent="SpaceBetween">
+                                <m:Label text="Customer:" width="8rem"/>
+                                <m:Text text="{customer} - {customerName}"/>
+                            </m:HBox>
+
+                            <m:HBox justifyContent="SpaceBetween">
+                                <m:Label text="Company Code:" width="8rem"/>
+                                <m:Text text="{companyCode}"/>
+                            </m:HBox>
+
+                            <m:HBox justifyContent="SpaceBetween">
+                                <m:Label text="Amount:" width="8rem"/>
+                                <m:ObjectNumber
+                                    number="{amount}"
+                                    unit="USD"/>
+                            </m:HBox>
+
+                            <m:HBox justifyContent="SpaceBetween">
+                                <m:Label text="Currency:" width="8rem"/>
+                                <m:Text text="USD"/>
+                            </m:HBox>
+
+                            <m:HBox justifyContent="SpaceBetween">
+                                <m:Label wrapping="true" text="Special G/L Indicator:" width="8rem"/>
+                                <m:Text text="F (Fixed)"/>
+                            </m:HBox>
+
+                        </m:VBox>
+
+                    </m:Panel>
+
+                </m:VBox>
+              </m:HBox>
+            </m:Panel>
+
+        </m:HBox>
+
+    </m:VBox>
+
+</m:Panel>
+<!--  -->
+
+      
+        <m:HBox justifyContent="End" class="sapUiLargeMarginTop">
+        <m:Button text="Back" class="wizardNavBtn sapUiSmallMarginEnd" press="onPrevStep"/>
+       
+        <m:Button text="Next" type="Emphasized" class="wizardNavBtn" press="onNextOpenItems"/>
+        </m:HBox>
+        </m:VBox>
+        
+    </m:WizardStep>
+
+        
+        <m:WizardStep id="idStep3" title="Review &amp; Submit">
+        <m:VBox height="100%" class="stepContent">
+       
+
+    <m:Panel headerText="Payment Details" expandable="false">
+      <!-- <m:VBox class="sapUiSmallMargin"> -->
+      <f:SimpleForm id="simpleForm5" 
+      labelSpanL="5" labelSpanM="6" labelSpanXL="6" editable="false" layout="ResponsiveGridLayout" columnsM="2"
+	    columnsL="3" columnsXL="4" class="formHiddenTitle sapUiFormContainerTitle sapUiFormTitle">
+     
+		<f:content>
+        <core:Title/>
+        <!-- <m:HBox justifyContent="SpaceBetween"> -->
+          <m:Label text="Company Code"/>
+            <m:Text text="{paymentsDetailsModel>/companyCode}"/>
+            
+          <m:Label text="Customer"/>
+          <m:Text text="{paymentsDetailsModel>/customer}"/>
+          
+          <m:Label text="Customer Name"/>
+          <m:Text text="{paymentsDetailsModel>/customerName}" /> 
+        <core:Title/>
+        
+          <m:Label text="Payment Type"/>
+          	<m:ObjectStatus
+							class="sapUiSmallMarginBottom"
+              text="{paymentsDetailsModel>/paymentType}"
+							state="{path:'paymentsDetailsModel>/paymentType', formatter: '.formatter.getPaymentTypeText'}"/>
+          <!-- <m:Text text="{paymentsDetailsModel>/paymentType}"/> -->
+          
+          <m:Label text="Amount"/>
+          <m:Text text="{paymentsDetailsModel>/amount} USD"/>
+          
+          <m:Label text="Key Date"/>
+          <m:Text text="{paymentsDetailsModel>/keyDate}"/>
+        <!-- </m:HBox> -->
+        <core:Title/>
+        
+          <m:Label text="Bank Authorization"/>
+          <m:Text text="{= ${paymentsDetailsModel>/isBankAuthorization} === true ? 'Confirmed' :'Not Confirmed'}"/>
+
+          <m:Label text="Residual Amount" visible="{= ${paymentsDetailsModel>/isResidualPayment} === true}"/>
+          <m:Text text="{paymentsDetailsModel>/residualPayment} USD" visible="{= ${paymentsDetailsModel>/isResidualPayment} === true}"/>
+    </f:content>
+    </f:SimpleForm>
+
+    </m:Panel>
+
+    <m:Panel id="idInvoiceDetailsPanel" headerText="Invoice Details" class="sapUiSmallMarginTop">
+
+      <m:Table
+        id="reviewTable"
+        items="{path: 'selectedInvoicesModel>/'}">
+
+        <m:columns>
+          <m:Column><m:Text text="Document No"/></m:Column>
+          <m:Column><m:Text text="Doc Type"/></m:Column>
+          <m:Column><m:Text text="Due Date"/></m:Column>
+          <m:Column><m:Text text="Open Amount"/></m:Column>
+          <m:Column><m:Text text="Amount to Pay"/></m:Column>
+        </m:columns>
+
+        <m:ColumnListItem>
+          <m:cells>
+            <m:Text text="{selectedInvoicesModel>DocumentNumber}"/>
+            <m:Text text="{selectedInvoicesModel>DocumentType}"/>
+            <m:Text text="{path:'selectedInvoicesModel>DueDate',formatter:'.formatter.formatDate'}"/>
+            <m:Text text="{selectedInvoicesModel>OpenAmount}"/>
+            <m:Text text="{selectedInvoicesModel>AmountToPay}"/>
+          </m:cells>
+        </m:ColumnListItem>
+
+      </m:Table>
+
+    </m:Panel>
+   
+    <m:CheckBox id="idConfirmCheckBox"
+      text="I have reviewed the details and confirm to submit this payment request."
+       />
+
+  <m:HBox justifyContent="End">
+  
+      <m:Button text="Back" class="wizardNavBtn sapUiSmallMarginEnd" press="onBackReviewPage"/>
+      
+      <m:Button text="Submit" type="Emphasized" class="wizardNavBtn" press="onSubmit"/>
+  </m:HBox>
+  </m:VBox>
+</m:WizardStep>
+
+    <!-- <m:WizardStep id="idStep4" title="Confirmation" visible="false">
+    <m:VBox height="100%" class="stepContent4">
+      
+    <m:VBox class="sapUiMediumMargin sapUiAlignCenter" justifyContent="Center" alignItems="Center">
+        <core:Icon id="idSuccessIcon"
+        src="sap-icon://accept"
+        color="green" backgroundColor="green"
+        size="3rem"
+        class="successCircleIcon sapUiSmallMarginBottom"/>
+
+        <m:Title text="Payment Request Submitted Successfully" level="H2"/>
+        <m:Title id="idPendingApprovalTitle" text="Pending for Approval" level="H4" class="sapUiSmallMarginBottom"/>
+        <m:Panel class="sapUiSmallMarginTop">
+
+        <f:SimpleForm
+    layout="ResponsiveGridLayout"
+    editable="false"
+    labelSpanL="5"
+    labelSpanM="6"
+    labelSpanXL="6"
+    class="customSimpleForm">
+
+    <f:content>
+
+        <m:Label text="Request Reference"/>
+        <m:Text text="{RequestId}"/>
+
+        <m:Label text="Payment Run Reference"/>
+        <m:Text text="{PaymentRunRef}"/>
+
+        <m:Label text="Payment Run Date"/>
+        <m:Text text="{RunDate}"/>
+
+        <m:Label text="Status"/>
+        <m:ObjectStatus id="idStatus" text="" state="Success"/>
+
+    </f:content>
+
+</f:SimpleForm>
+
+        </m:Panel>
+
+        <m:Text
+        text="Your request is being processed in background."
+        class="sapUiSmallMarginTop"/>
+
+        <m:HBox justifyContent="End" class="sapUiMediumMarginTop">
+
+        <m:Button text="View Details" class="wizardNavBtn sapUiSmallMarginEnd" press="onViewDetails"/>
+        <m:Button text="Done" type="Emphasized" class="wizardNavBtn" press="onFinish"/>
+
+        </m:HBox>
+
+    </m:VBox>
+    </m:VBox>
+        </m:WizardStep> -->
+
+        
+
+      </m:Wizard>
+
+    </m:content>
+    <!--  -->
+
+    <!-- <m:footer>
+				<m:Bar>
+					<m:contentRight>
+						<m:Button id="idBackBtn" text="Back" press="onBackMasterBtn" type="Success"/>
+						<m:Button id="idSaveBtn" text="Save" press="onSaveMasterBtn" type="Success"/>
+					</m:contentRight>
+				</m:Bar>
+			</m:footer> -->
+
+  </m:Page>
+
+</mvc:View>

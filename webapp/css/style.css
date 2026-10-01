@@ -1,0 +1,82 @@
+/* Enter your custom styles here */
+.paymentBtnSelected .sapMBtnInner {
+    background: #0a6ed1 !important;
+    border-color: #0a6ed1 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.paymentBtnSelected .sapMBtnHoverable:hover .sapMBtnInner {
+    background: #085caf !important;
+}
+
+/* Button */
+.wizardNavBtn .sapMBtnInner {
+    height: 2.2rem !important;
+    min-width: 5rem;
+    border-radius: 0rem !important;
+    display: flex !important;
+    align-items: center !important;   /* fixes vertical alignment */
+    justify-content: center;
+    /* padding: 0 1rem !important; */
+}
+
+/* Fix text alignment + size */
+.wizardNavBtn .sapMBtnContent {
+    font-size: 0.875rem !important;  
+    line-height: 2.5rem !important;  
+}
+
+/* Fix icon alignment */
+.wizardNavBtn .sapUiIcon {
+    font-size: 1rem !important;
+    line-height: 2.5rem !important;
+}
+/* Payment Type Buttons */
+.paymentTypeCss .sapMBtnInner {
+    height: 2.2rem !important;
+    min-width: 5rem;
+    border-radius: 0rem !important;
+    display: flex !important;
+    align-items: center !important;  
+    justify-content: center;
+    /* color:black !important; */
+    /* background-color: beige; */
+    /* padding: 0 1rem !important; */
+}
+.successCircleIcon {
+    background-color: #107e3e;  
+    color: #ffffff !important;   
+    border-radius: 50%;        
+    padding: 0.75rem;           
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:3rem;
+}
+.noWizardScroll .sapMWizardStepContainer {
+    overflow: hidden !important;
+}
+
+.noWizardScroll .sapMWizardScrollContainer {
+    overflow: hidden !important;
+}
+.noWizardScroll .sapMScrollContScroll {
+    overflow-y: auto !important;
+}
+.stepContent {
+    /* height : 100% !important; */
+    height: calc(100vh - 280px) !important;
+    overflow-y: auto;
+}
+.stepContent4 {
+    /* height : 100% !important; */
+    height: calc(100vh - 240px) !important;
+    overflow-y: auto;
+}
+
+/* .outlinedPanel {
+    border: 1px solid #d9d9d9; 
+    border-radius: 6px;        
+    box-shadow: none;  
+} */

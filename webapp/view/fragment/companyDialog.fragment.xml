@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog title="Select Company"
+		class="sapUiSizeCompact">
+		<subHeader>
+			<Toolbar>
+				<SearchField id="companyCode_Id" liveChange="handlecompanyCodeValueHelpSearch" />
+			</Toolbar>
+		</subHeader>
+
+		<List id="companyCode_listId" items="{companyCodeModel>/results}" width="20rem"
+			mode="SingleSelectMaster" selectionChange="companyCodeSelectionChange">
+			<StandardListItem description="{companyCodeModel>CompanyCode}" iconInset="true" title="{companyCodeModel>CompanyCodeName}"/>
+
+		</List>
+		<buttons>
+			<Button text="Cancel" press="handlecompanyCodeValueHelpClose" type="Emphasized" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
