@@ -149,6 +149,7 @@ sap.ui.define([
 
     },
     onNextParameters : function (oEvent) { 
+       var sBankKey,aData,aFiltered;
         var bValid = true;      
         var oWizard = this.byId("idWizard");        
         var oStep1 = this.byId("idStep1");
@@ -222,6 +223,11 @@ sap.ui.define([
               return;
           }
           
+          sBankKey = this.getView().byId("idBankSelection").getSelectedKey();
+          aData = this.getView().getModel("bankDetailsModel").getData().results;
+          aFiltered = aData.filter(function (oItem) {
+              return oItem.BankAccount === sBankKey;
+          });
           
           firstPageDataObj.customer = oSelectionObj.customer;
             firstPageDataObj.companyCode = oSelectionObj.companyCode;
@@ -232,6 +238,13 @@ sap.ui.define([
             firstPageDataObj.isPartialPayment = this.getView().byId("idPartialPaymentBtn").hasStyleClass("paymentBtnSelected");
             firstPageDataObj.isOnAccount = this.getView().byId("idOnAccountBtn").hasStyleClass("paymentBtnSelected");
             firstPageDataObj.isBankAuthorization = this.getView().byId("idBankAuthorization").getSelected();
+            firstPageDataObj.bankKey = aFiltered[0]?.BankInternalID;
+            firstPageDataObj.bankAccountNo = aFiltered[0]?.BankAccount;
+            firstPageDataObj.partnerBankType = aFiltered[0]?.BankDetailReference;
+            firstPageDataObj.reference = this.getView().byId("idReference").getValue();
+            firstPageDataObj.assignment = this.getView().byId("idAssignment").getValue();
+            firstPageDataObj.itemText = this.getView().byId("idMsgText").getValue();
+
             
             this.byId("idResidualPaymentPanel").setVisible(       //change logic if partial - multiselect
                 firstPageDataObj.isPartialPayment ? true : false
@@ -365,6 +378,14 @@ sap.ui.define([
         }
         // oWizard.nextStep();
     },
+    onBankDetailsChange:function(oEvent){
+      var sBankKey = oEvent.getSource().getSelectedKey();
+      // var sBankKey = this.getView().byId("idBankSelection").getSelectedKey();
+      // var aData = this.getView().getModel("bankDetailsModel").getData().results;
+      // var aFiltered = aData.filter(function (oItem) {
+      //     return oItem.BankAccount === sBankKey;
+      // });
+    },
     onCheckBoxSelect:function(oEvent){
       var oBankAuthModel = this.getOwnerComponent().getModel("bankValidation");
       var sCompanyCode = this.byId("idCompanyCode").getValue();
@@ -373,7 +394,10 @@ sap.ui.define([
       that.getView().byId("idLblBankDetails").setVisible(false);
       that.getView().byId("idBankSelection").setVisible(false);
 
-      if(sCompanyCode === "" || sCompanyCode === null ||
+      if (this.byId("idBankAuthorization").getSelected() === false) {
+          return 0;
+      }
+      else if(sCompanyCode === "" || sCompanyCode === null ||
         sCompanyCode === undefined){         
         this.byId("idBankAuthorization").setSelected(false);
         MessageToast.show("Please select a company code.");
@@ -413,7 +437,9 @@ sap.ui.define([
         this.byId("idCompanyCode").setValueState(sap.ui.core.ValueState.None);
         this.byId("idCompanyCode").setValueStateText("");
       oBankAuthModel.read("/ZFI_CUST_BANK_DETAILS", {
-        urlParameters : null,
+         urlParameters: {
+        "$expand": "to_BusinessPartnerBank"
+        },
         filters:aFilters,
         // {"$expand" : 
         // "statusDesc,entityDesc,typeDesc"},
@@ -683,6 +709,12 @@ onRefresh:function(){
       var sCustomerCode = this.getOwnerComponent().getModel().getProperty("/firstPageData/customer");
       var fAmount = String(this.getOwnerComponent().getModel().getProperty("/firstPageData/amount"));
       var sDate = this.getOwnerComponent().getModel().getProperty("/firstPageData/keyDate");
+      var sBankKey = this.getOwnerComponent().getModel().getProperty("/firstPageData/bankKey");
+      var sBankAccountNo = this.getOwnerComponent().getModel().getProperty("/firstPageData/bankAccountNo");
+      var sBankType = this.getOwnerComponent().getModel().getProperty("/firstPageData/partnerBankType");
+      var sReference = this.getOwnerComponent().getModel().getProperty("/firstPageData/reference");
+      var sAssignment = this.getOwnerComponent().getModel().getProperty("/firstPageData/assignment");
+      var sMsgText = this.getOwnerComponent().getModel().getProperty("/firstPageData/itemText");
       // .toISOString();
       if(sDate.includes(".")){
       var aParts = sDate.split(".");
@@ -739,6 +771,14 @@ onRefresh:function(){
         "Amount": fAmount, 
         "Waers": "USD",
         "Bldat": sKeyDate,
+        // Additonal changes 10/02/2026
+        "Bankl": sBankKey,
+        "Bankn": sBankAccountNo,
+        "Bvtyp": sBankType,
+        "Xblnr": sReference,
+        "Dzuonr": sAssignment,
+        "Sgtxt": sMsgText,
+        //
         // "Budat": new Date().toISOString(),
         "SpGlInd": "",
         "Laufd": new Date(),
@@ -759,6 +799,14 @@ onRefresh:function(){
       "Amount": fAmount,
       "Waers": "USD",
       "Bldat": sKeyDate,
+      // Additonal changes 10/02/2026
+        "Bankl": sBankKey,
+        "Bankn": sBankAccountNo,
+        "Bvtyp": sBankType,
+        "Xblnr": sReference,
+        "Dzuonr": sAssignment,
+        "Sgtxt": sMsgText,
+      //
       // "Budat": new Date().toISOString(),
       "SpGlInd": "F"
     }

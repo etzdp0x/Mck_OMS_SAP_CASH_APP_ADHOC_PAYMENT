@@ -118,9 +118,9 @@
                       
                     <m:Label id="idLblBankDetails" text="Select Bank" visible="false"></m:Label>
                      <m:ComboBox visible="false" width="20rem" id="idBankSelection" placeholder="Select Bank"
-                      selectionChange="onCompanyCodeChange" class="sapUiTinyMarginBegin"
+                      selectionChange="onBankDetailsChange" class="sapUiTinyMarginBegin"
                       items="{bankDetailsModel>/results}"> 
-                      <core:Item key="{bankDetailsModel>CompanyCode}" text="{bankDetailsModel>CompanyCode} - {companyCodeModel>CompanyCodeName}" />
+                      <core:Item key="{bankDetailsModel>BankAccount}" text="{bankDetailsModel>to_BusinessPartnerBank/BankName} - {bankDetailsModel>BankAccount}" />
                     </m:ComboBox>
 
                 </f:SimpleForm>
